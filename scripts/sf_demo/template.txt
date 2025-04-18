@@ -1,0 +1,15 @@
+class drilling_defination(BaseModel):
+    object: str = Field(description="The object or the workpiece which robot needs to use for drilling")
+
+
+class drilling_implementation(BaseTool):
+    name = "drilling"
+    description = "The tool which makes robot do the drilling action"
+    args_schema: Type[BaseModel] = drilling_defination
+
+    def _run(self, object: str):
+        move_to_pose_implementation()._run(pose_name="home")
+        obje = check_pose_implementation()._run(object_name="duster")
+        objpose = 
+        move_to_pose_implementation()._run(goal_pose=obje)
+ 
