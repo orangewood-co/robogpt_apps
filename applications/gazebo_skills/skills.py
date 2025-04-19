@@ -5,12 +5,12 @@ import getpass
 from gazebo_msgs.srv import SpawnModel, GetModelState
 from geometry_msgs.msg import Pose
 from gazebo_msgs.msg import ModelStates
-from robogpt_apps.scripts.utilities import utils
+from robogpt_apps.applications.utilities import utils
 from langchain.tools import BaseTool
 from typing import Type, List, Dict
 from pydantic import BaseModel, Field
 from difflib import SequenceMatcher
-from robogpt_apps.scripts.base.skills import *
+from robogpt_apps.applications.base.skills import *
 
 #################### Utility Functions and Constants ###################
 model_dir = f'/home/{getpass.getuser()}/orangewood_ws/src/robogpt_apps/scripts/gazebo_skills/models'

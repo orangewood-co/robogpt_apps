@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-from robogpt_apps.scripts.utilities import utils
+from robogpt_apps.applications.utilities import utils
 from langchain.tools import BaseTool
 from typing import Type, List, Dict
 from pydantic import BaseModel, Field
-from robogpt_apps.scripts.base.skills import *
+from robogpt_apps.applications.base.skills import *
 
 # Data model for the 'place_object' tool
 class place_object_definition(BaseModel):

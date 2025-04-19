@@ -1,35 +1,23 @@
 #!/usr/bin/python3
-print("Loaded robot loader")
-
 import json
 import os
 import sys
-import rclpy
-from rclpy.node import Node
-import ament_index_python.packages
+import time
 import importlib
 from difflib import SequenceMatcher
+from robogpt_tools.applications.utilities.skill_initializers import Colors
+from robogpt_tools.applications.utilities.param_read_write import ParameterReader,ParameterWriter
 
-class RobotLoader(Node):
+class RobotLoader():
     def __init__(self):
-        super().__init__('robot_loader')
-        
+        print(f"{Colors.GREEN}Initializing robot loader{Colors.RESET}")
         self.robots = []
         self.robot_list = []
+        self.config_path = "robogpt_tools/robot_config/bot_details.json"
+        self.robotgpt_config = "robogpt_tools/robot_config/robogpt.json"
+        self.param_writer = ParameterWriter()
+        self.param_reader = ParameterReader()
         
-        # Get package paths using ROS2 approach
-        try:
-            agents_path = ament_index_python.packages.get_package_share_directory('robogpt_agents')
-            vision_path = ament_index_python.packages.get_package_share_directory('robogpt_vision')
-            driver_path = ament_index_python.packages.get_package_share_directory('robot_drivers')
-            
-            self.config_path = os.path.join(agents_path, "config/robot_config/bot_details.json")
-            self.vision_path = os.path.join(vision_path, "config/vision_config.json")
-            self.driver_path = driver_path
-            self.robotgpt_config = os.path.join(agents_path, "config/robot_config/robogpt.json")
-        except ament_index_python.packages.PackageNotFoundError as e:
-            self.get_logger().error(f"Package not found: {e}")
-
     def is_robot_connected(self, ip: str) -> bool:
         # Ping the IP address with 1 packet and wait for a response
         command = f"ping -c 1 -W 1 {ip} > /dev/null 2>&1"
@@ -45,16 +33,17 @@ class RobotLoader(Node):
 
     def load_robots(self):
         try:
+            time.sleep(3)
             # Use ROS2 parameter API
-            robot_model = self.declare_parameter('robot_model', 'ec63').value
+            robot_model = self.param_reader.get_remote_parameter('robogpt_agent', 'robot_name', 'string')
             sim_flag = self.declare_parameter('use_sim', False).value
-
+            print(f"{Colors.GREEN}Loading robot model: {robot_model}{Colors.RESET}")
             with open(self.config_path, "r") as file:
                 data = json.load(file)
 
             bot = self.get_matched_robot(robot_name=robot_model)
             self.robot_list.append(robot_model)
-            self.get_logger().info(f"Updating the wrapper of {bot}")
+            print(f"Updating the wrapper of {bot}")
             wrapper_path = "robot_drivers.wrappers.sim_wrapper" if sim_flag else f"robot_drivers.wrappers.{bot}_wrapper"
 
             # Append the parent directory of 'wrappers' to sys.path
@@ -77,9 +66,9 @@ class RobotLoader(Node):
                 if self.is_robot_connected(data[robot_model]["robot_ip"]):
                     self.robots.append(wrapper(data[robot_model]["robot_ip"]))
                 else:
-                    self.get_logger().warn("Please check the robot connection and try again")
+                    print("Please check the robot connection and try again")
 
         except Exception as err:
-            self.get_logger().error(f"Could not load robot due to {err}")
+            print(f"Could not load robot due to {err}")
         
         return self.robot_list, self.robots

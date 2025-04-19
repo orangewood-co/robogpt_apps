@@ -46,3 +46,17 @@ import tf_transformations
 # object_details = os.path.join(vision_path, "config/vision_config.json")
 # env_path = os.path.join(base_dir, "config/.demo_env")
 # keys = utils.load_env_variables(env_path)
+class Colors:
+    # Reset
+    RESET = "\033[0m"
+    
+    # Regular colors
+    BLACK = "\033[30m"
+    RED = "\033[31m"
+    GREEN = "\033[32m"
+    YELLOW = "\033[33m"
+    BLUE = "\033[34m"
+    MAGENTA = "\033[35m"
+    CYAN = "\033[36m"
+    WHITE = "\033[37m"
+    
