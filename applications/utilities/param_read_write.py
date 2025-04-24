@@ -129,11 +129,9 @@ def main(args=None):
     reader = ParameterReader()
     
     # Example usage: set 'my_param' on 'other_node' to 'new_value'
-    success = writer.set_remote_parameter('robogpt_agent', 'robot_name', 'owl65', 'string')
-    bool_value = reader.get_remote_parameter('robogpt_agent', 'robot_name', 'string')
-    
-    print(bool_value)
-    
+    success = writer.set_remote_parameter('configuration_setup', 'robot_name', 'ec63', 'string')
+    # bool_value = reader.get_remote_parameter('robogpt_agent', 'robot_name', 'string')
+
     writer.destroy_node()
     reader.destroy_node()
     rclpy.shutdown()

@@ -1,29 +1,29 @@
 #!/usr/bin/python3
+print("loading robots")
 import json
 import os
 import sys
-import time
+import getpass
 import importlib
 from difflib import SequenceMatcher
 from robogpt_tools.applications.utilities.skill_initializers import Colors
-from robogpt_tools.applications.utilities.param_read_write import ParameterReader,ParameterWriter
+from robogpt_tools.applications.utilities.utils import *
 
 class RobotLoader():
     def __init__(self):
         print(f"{Colors.GREEN}Initializing robot loader{Colors.RESET}")
         self.robots = []
         self.robot_list = []
-        self.config_path = "robogpt_tools/robot_config/bot_details.json"
-        self.robotgpt_config = "robogpt_tools/robot_config/robogpt.json"
-        self.param_writer = ParameterWriter()
-        self.param_reader = ParameterReader()
-        
+        self.config_path = f"/home/{getpass.getuser()}/orangewood_ws/src/robogpt_tools/robot_config/bot_details.json"
+        self.robotgpt_config = f"/home/{getpass.getuser()}/orangewood_ws/src/robogpt_tools/robot_config/robogpt.json"
+        self.driver_path = f"/home/{getpass.getuser()}/orangewood_ws/src/robogpt_tools/robot_drivers"
+
     def is_robot_connected(self, ip: str) -> bool:
         # Ping the IP address with 1 packet and wait for a response
         command = f"ping -c 1 -W 1 {ip} > /dev/null 2>&1"
         response = os.system(command)
         return response == 0
-    
+
     def get_matched_robot(self, robot_name: str) -> str:
         with open(self.config_path, 'r') as file:
             bot_dict = json.load(file)
@@ -33,10 +33,12 @@ class RobotLoader():
 
     def load_robots(self):
         try:
-            time.sleep(3)
             # Use ROS2 parameter API
-            robot_model = self.param_reader.get_remote_parameter('robogpt_agent', 'robot_name', 'string')
-            sim_flag = self.declare_parameter('use_sim', False).value
+            config_data = get_single_message(topic_name="robot_config")
+            robot_model = config_data.robot_name
+            print(f"Robot name is {robot_model}")
+            print("Robot model is ",robot_model)
+            sim_flag = config_data.use_sim
             print(f"{Colors.GREEN}Loading robot model: {robot_model}{Colors.RESET}")
             with open(self.config_path, "r") as file:
                 data = json.load(file)

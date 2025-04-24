@@ -1,9 +1,8 @@
-import rclpy.logging
+import time
+from typing import ClassVar
 from robogpt_tools.applications.utilities.skill_initializers import *
 from robogpt_tools.applications.utilities.robot_loader import RobotLoader
-from typing import ClassVar, Optional, Dict, Any
-import time
-print(f"{Colors.YELLOW}loaded loaded loaded{Colors.RESET}")
+
 robot_list,robots = RobotLoader().load_robots()
 
 # Data model for the 'delay' tool
